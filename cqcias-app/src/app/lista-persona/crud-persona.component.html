@@ -1,0 +1,132 @@
+<div class="card border-primary mb-3 mt-5">
+  <div class="card-header">Catalogo de Personas</div>
+  <div class="card-body text-primary">
+    <h5 class="card-title">Listado de Personas</h5>
+    <div class="my-2 text-left d-flex flex-row-reverse">
+      <button class="btn btn-rounded btn-primary" type="button" (click)="openForm(formPersona, false)">
+        Nuevo <i class="fa fa-plus" aria-hidden="true"></i>
+      </button>
+    </div>
+    <div class="alert alert-info" *ngIf="personasList?.lenght == 0">
+      Por el momento no hay registros disponibles.
+    </div>
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Teléfono</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let persona of personasList">
+          <td *ngIf="persona.estatus != 'Inactivo'">{{persona.nombre}}</td>
+          <td *ngIf="persona.estatus != 'Inactivo'">{{persona.telefono}}</td>
+          <td *ngIf="persona.estatus != 'Inactivo'">
+            <button type="button" name="editar" class="btn btn-primary btn-sm" (click)="obtPersona(persona)">Editar <i class="fa fa-binoculars" aria-hidden="true"></i></button>
+          </td>
+          <td *ngIf="persona.estatus != 'Inactivo'">
+            <button type="button" name="eliminar" (click)="confirmDelete(deletePersona, persona)" class="btn btn-danger btn-sm">Eliminar <i class="fa fa-trash-o" aria-hidden="true"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #formPersona>
+  <div class="modal-header">
+      <h4 *ngIf="edit" class="modal-title pull-left">Editar Persona</h4>
+      <h4 *ngIf="!edit" class="modal-title pull-left">Nueva Persona</h4>
+      <button *ngIf="formEdit" mdbBtn type="button" class="btn btn-sm btn-primary ml-auto waves-light"
+            color="primary" mdbWavesEffect size="sm"
+            (click)="activarEdicion()">
+      {{ disableEditForm ? 'Editar' : 'Editando...'}}
+      <i class="fa fa-edit mr-1" aria-hidden="true"></i>
+    </button>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true" (click)="cleanForm()">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="personaForm">
+          <div class="form-group row justify-content-center align-items-center">
+            <label for="nombre" class="col-form-label col-sm-3">Nombre</label>
+            <div class="col-sm-6">
+              <input id="nombre" type="text" class="form-control disabled" formControlName="formNombre" [(ngModel)]="persona.nombre" name="nombre">
+              <div *ngIf="personaForm.controls['formNombre'].touched">
+                <div *ngIf="personaForm.controls['formNombre'].errors?.required"
+                     class="text-danger animated fadeInDown fast-4 small">
+                  El campo nombre es obligatorio.
+                </div>
+                <div *ngIf="personaForm.controls['formNombre'].errors?.maxlength"
+                     class="text-danger animated fadeInDown fast-4 small">
+                  El campo nombre no puede ser mayor a 100 caracteres.
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="form-group row justify-content-center align-items-center">
+          <label for="primer_apellido" class="col-form-label col-sm-3">Primer Apellido</label>
+          <div class="col-sm-6">
+            <input formControlName="formPrimerApellido" type="text" class="form-control" [(ngModel)]="persona.primer_apellido" name="primer_apellido">
+            <div *ngIf="personaForm.controls['formPrimerApellido'].touched">
+              <div *ngIf="personaForm.controls['formPrimerApellido'].errors?.required"
+                   class="text-danger animated fadeInDown fast-4 small">
+                El campo primer apellido es obligatorio.
+              </div>
+              <div *ngIf="personaForm.controls['formPrimerApellido'].errors?.maxlength"
+                   class="text-danger animated fadeInDown fast-4 small">
+                El campo primer apellido no puede ser mayor a 100 caracteres.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row justify-content-center align-items-center">
+          <label for="segundo_apellido" class="col-form-label col-sm-3">Segundo Apellido</label>
+          <div class="col-sm-6">
+            <input formControlName="formSegundoApellido" type="text" class="form-control" [(ngModel)]="persona.segundo_apellido" name="segundo_apellido">
+            <div *ngIf="personaForm.controls['formSegundoApellido'].touched">
+              <div *ngIf="personaForm.controls['formSegundoApellido'].errors?.required"
+                   class="text-danger animated fadeInDown fast-4 small">
+                El campo segundo apellido es obligatorio.
+              </div>
+              <div *ngIf="personaForm.controls['formSegundoApellido'].errors?.maxlength"
+                   class="text-danger animated fadeInDown fast-4 small">
+                El campo segundo apellido no puede ser mayor a 100 caracteres.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row justify-content-center align-items-center">
+          <label for="telefono" class="col-form-label col-sm-3">telefono</label>
+          <div class="col-sm-6">
+            <input formControlName="formTelefono" type="text" class="form-control" [(ngModel)]="persona.telefono" name="telefono">
+            <div *ngIf="personaForm.controls['formTelefono'].touched">
+              <div *ngIf="personaForm.controls['formTelefono'].errors?.pattern"
+                   class="text-danger animated fadeInDown fast-4 small">
+                   El campo teléfono debe ser numérico y contener de 7 a 10 dígitos.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row justify-content-center align-items-center">
+          <label for="estatus" class="col-form-label col-sm-3">Estatus</label>
+          <div class="col-sm-6">
+            <input formControlName="formEstatus" type="text" class="form-control" [(ngModel)]="persona.estatus" name="estatus">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger" (click)="modalRef.hide(); cleanForm();">Cerrar <i class="fa fa-window-close-o" aria-hidden="true"></i></button>
+      <button type="button" class="btn btn-primary" (click)="createPersona()" [disabled]="disableEditForm">Guardar <i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+    </div>
+</ng-template>
+
+<ng-template #deletePersona>
+  <div class="modal-body text-center">
+    <p>¿Quieres confirmar la operación?</p>
+    <button type="button" class="btn btn-danger mr-5" (click)="modalRef.hide()">Cancelar</button>
+    <button type="button" class="btn btn-primary" (click)="delPersona()">Si, eliminar el registro</button>
+  </div>
+</ng-template>

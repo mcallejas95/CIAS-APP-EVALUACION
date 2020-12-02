@@ -1,0 +1,1 @@
+INSERT INTO Persona (nombre, primer_apellido, segundo_apellido, telefono, estatus) VALUES('Andrés', 'Guzmán', 'Guzmán', '4424584331', 'Activo');
